@@ -10,7 +10,9 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@Table(name = "animals")
+@Table(name = "animals", uniqueConstraints = @UniqueConstraint(
+        columnNames = {"name", "type", "birth_date", "owner_id"}
+))
 public class Animal {
 
     @Id
