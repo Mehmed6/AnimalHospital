@@ -1,6 +1,7 @@
 package com.doganmehmet.app.exception;
 
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -46,6 +47,18 @@ public class GlobalExceptionHandler {
 
         errorResponse.put("errorCode", "VALIDATION_ERROR");
         errorResponse.put("errorMessage", errorMessages);
+        errorResponse.put("path", webRequest.getDescription(false).replace("uri=", ""));
+        errorResponse.put("errorTime", LocalDateTime.now().format(m_formatter));
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, String>> handleDataIntegrityViolationException(DataIntegrityViolationException exception, WebRequest webRequest)
+    {
+        var errorResponse = new HashMap<String, String>();
+        errorResponse.put("errorCode", "DATA_INTEGRITY_VIOLATION");
+        errorResponse.put("errorMessage", "Data integrity violation: " + exception.getMessage());
         errorResponse.put("path", webRequest.getDescription(false).replace("uri=", ""));
         errorResponse.put("errorTime", LocalDateTime.now().format(m_formatter));
 
